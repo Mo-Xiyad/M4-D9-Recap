@@ -1,51 +1,81 @@
+import { useFormik } from "formik";
+import * as yup from "yup";
 import { useState, useEffect } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import FormControl from "react-bootstrap/FormControl";
 import { Col, Container, Row } from "react-bootstrap";
 
-const Registration = ({
-  setName,
-  name,
-  setSurname,
-  surname,
-  setEmail,
-  email,
-  setPassword,
-  password,
-  setConfirmPassword,
-  confirmPassword,
-}) => {
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  };
+// Install formMilk
+// npm i formik yup
 
-  const formCkeck = async () => {
+const Registration = ({ setRegistrationForm, registrationForm }) => {
+  const validationSchema = yup.object().shape({
+    name: yup.string().required("name is required"),
+    surname: yup.string().required("name is required"),
+    email: yup.string().email("email invalid").required("name is required"),
+    password: yup.string().min(8, "Too short").required("Password is required"),
+    confirmPassword: yup
+      .string()
+      .required("password is required")
+      .oneOf([yup.ref("password")], "Both password need to be the same"),
+    // .when("password", {
+    //   is: (val) => (val && val.length > 0 ? true : false),
+    //   then: yup
+    //     .string()
+    //     .oneOf([yup.ref("password")], "Both password need to be the same"),
+    // }),
+  });
+
+  const { values, handleChange, handleSubmit, errors } = useFormik({
+    initialValues: {
+      name: "",
+      surname: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    onSubmit: (values) => {
+      alert(JSON.stringify(values));
+      setRegistrationForm(values);
+    },
+    validationSchema: validationSchema,
+  });
+
+  const formCkeck = () => {
     if (
-      name.length > 2 &&
-      surname.length > 2 &&
-      email.length > 2 &&
-      password.length > 2 &&
-      confirmPassword.length > 2
+      values.name.length > 2 &&
+      values.surname.length > 2 &&
+      values.email.length > 2 &&
+      values.password.length > 7 &&
+      values.confirmPassword.length > 7
     ) {
       return true;
     }
   };
   useEffect(() => {
     formCkeck();
-  }, [name, surname, email, password, confirmPassword]);
+  }, [
+    values.name,
+    values.surname,
+    values.email,
+    values.password,
+    values.confirmPassword,
+  ]);
 
   return (
     <Container>
       <Row className="justify-content-center">
         <Col className="col-6">
-          <Form onSubmit={handleSubmit}>
+          <Form>
             <Form.Group>
               <Form.Label>Name</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={values.name}
+                onChange={handleChange}
+                name="name"
               />
             </Form.Group>
 
@@ -54,8 +84,9 @@ const Registration = ({
               <Form.Control
                 type="text"
                 placeholder="Enter surname "
-                value={surname}
-                onChange={(e) => setSurname(e.target.value)}
+                value={values.surname}
+                onChange={handleChange}
+                name="surname"
               />
             </Form.Group>
 
@@ -64,8 +95,9 @@ const Registration = ({
               <Form.Control
                 type="email"
                 placeholder="Enter email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={values.email}
+                onChange={handleChange}
+                name="email"
               />
               <Form.Text className="text-muted">
                 We'll never share your email with anyone else.
@@ -75,25 +107,45 @@ const Registration = ({
             <Form.Group>
               <Form.Label>Password</Form.Label>
               <Form.Control
-                type="password"
                 placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                type="password"
+                value={values.password}
+                onChange={handleChange}
+                name="password"
+                isInvalid={errors.password}
               />
+              <FormControl.Feedback
+                type={errors.password ? "invalid" : "valid"}
+              >
+                {errors.password}
+              </FormControl.Feedback>
             </Form.Group>
 
             <Form.Group>
               <Form.Label>Confirm password</Form.Label>
               <Form.Control
-                type="password"
                 placeholder="Confirm password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={values.confirmPassword}
+                type="password"
+                onChange={handleChange}
+                name="confirmPassword"
+                isInvalid={errors.confirmPassword}
               />
+
+              <FormControl.Feedback
+                type={errors.confirmPassword ? "invalid" : "valid"}
+              >
+                {errors.confirmPassword}
+              </FormControl.Feedback>
             </Form.Group>
 
             <div className="d-flex justify-content-center">
-              <Button variant="primary" type="submit" disabled={!formCkeck()}>
+              <Button
+                variant="primary"
+                type="submit"
+                onClick={handleSubmit}
+                disabled={!formCkeck()}
+              >
                 Submit
               </Button>
             </div>

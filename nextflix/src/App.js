@@ -19,11 +19,13 @@ import Home from "./components/Home";
 const App = () => {
   const [query, setQuery] = useState("");
   // this is the infomation for the registration
-  const [name, setName] = useState("");
-  const [surname, setSurname] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [registrationForm, setRegistrationForm] = useState({
+    name: "",
+    surname: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
   return (
     <div className="App">
@@ -56,16 +58,8 @@ const App = () => {
             return (
               <Registration
                 {...routProps}
-                setName={setName}
-                name={name}
-                setSurname={setSurname}
-                surname={surname}
-                setEmail={setEmail}
-                email={email}
-                setPassword={setPassword}
-                password={password}
-                setConfirmPassword={setConfirmPassword}
-                confirmPassword={confirmPassword}
+                setRegistrationForm={setRegistrationForm}
+                registrationForm={registrationForm}
               />
             );
           }}
@@ -74,6 +68,7 @@ const App = () => {
         {query.length > 3 && <Search query={query} />}
         <MyFooter />
       </Router>
+      <h1>{registrationForm.email}</h1>
     </div>
   );
 };
