@@ -77,6 +77,10 @@ const Navbarr = ({ onChange, value, history, location, match }) => {
               </Link>
               <Nav.Link href="#action4">Recently Added</Nav.Link>
               <Nav.Link href="#action5">My List</Nav.Link>
+
+              <Link to={"/registration"} className="nav-link">
+                Registration
+              </Link>
             </Nav>
           </Navbar.Collapse>
           <div class="right-icons row">
